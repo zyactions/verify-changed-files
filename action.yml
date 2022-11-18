@@ -1,0 +1,49 @@
+name: 'ZyAction: Verify Changed Files'
+
+description: Verify file changes that occur during workflow execution.
+author: Florian Bernd
+
+branding:
+  icon: check-square
+  color: green
+
+inputs:
+  path:
+    description: >
+      A file, directory or wildcard pattern that describes which files to verify.
+      Supports multi-line strings.
+      Matches all files, if set to the empty string.
+    type: string
+    required: false
+    default: ''
+  separator:
+    description: >
+      A character- or string to be used to separate the individual file names in the output list. 
+      Any filename containing this separator will be enclosed in double quotes. 
+      Defaults to the newline character '\n', if set to the empty string.
+    type: string
+    required: false
+    default: ''
+  exclude-ignored:
+    description: Whether to exclude '.gitignore' ignored files from the changed files detection.
+    type: boolean
+    required: false
+    default: true
+
+outputs:
+  changed-files:
+    description: The list of all changed files, or an empty string.
+    value: ${{ steps.verify.outputs.changed-files }}
+
+runs:
+  using: composite
+  steps:
+    - name: Verify
+      id: verify
+      shell: bash
+      env:
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_SEPARATOR: ${{ inputs.separator }}
+        INPUT_EXCLUDE_IGNORED: ${{ inputs.exclude-ignored != 'false' && 'true' || 'false' }}
+      run: |
+        bash "$GITHUB_ACTION_PATH/entrypoint.sh"
