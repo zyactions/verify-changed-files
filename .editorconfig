@@ -1,6 +1,7 @@
 ### Header #########################################################################################
 
 # Author: Florian Bernd
+# Source: https://github.com/zysharp/templates
 
 ### Common Settings ################################################################################
 
@@ -22,7 +23,7 @@ trim_trailing_whitespace = true
 ### File Extension Settings ------------------------------------------------------------------------
 
 # XML Configuration Files
-[*.{xml,config,props,targets,nuspec,resx,ruleset,vsixmanifest,vsct}]
+[*.{xml,config}]
 indent_size = 2
 
 # JSON Files
@@ -39,7 +40,7 @@ indent_size = 2
 trim_trailing_whitespace = false
 
 # Web Files
-[*.{htm,html,js,jsm,ts,tsx,cjs,cts,ctsx,mjs,mts,mtsx,css,sass,scss,less,pcss,svg,vue}]
+[*.{htm,html,js,jsm,jsx,ts,tsx,cjs,cts,ctsx,mjs,mts,mtsx,css,sass,scss,less,pcss,svg,vue}]
 indent_size = 2
 
 # Batch Scripts
