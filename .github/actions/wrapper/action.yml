@@ -1,0 +1,37 @@
+name: Test Wrapper
+
+inputs:
+  path:
+    type: string
+    required: true
+
+outputs:
+  changed-files:
+    value: ${{ steps.result.outputs.result }}
+
+runs:
+  using: composite
+  steps:
+    # Pipe changed files ...
+    - name: Get Changed Files
+      id: stage1
+      uses: ./.
+      with:
+        return-pipe: true
+
+    # ... into a glob filter
+    - name: Filter Results
+      id: stage2
+      uses: zyactions/glob@v1
+      with:
+        pattern: ${{ inputs.path }}
+        pipe: ${{ steps.stage1.outputs.pipe }}
+        return-pipe: true
+
+    # ... and apply shell quoting
+    - name: Quote
+      id: result
+      shell: bash
+      run: |
+        result=$(${{ steps.stage2.outputs.pipe }} | '${{ github.action_path }}/shellquote.sh' ' ')
+        echo "result=$result" >> $GITHUB_OUTPUT
