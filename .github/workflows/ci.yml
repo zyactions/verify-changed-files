@@ -25,14 +25,13 @@ jobs:
 
       - name: 'TEST: Expect No Changes'
         id: test-no-changes
-        uses: ./
+        uses: ./.github/actions/wrapper
         with:
           path: |
             test/*.txt
             test/*.sql
             test/**/*.txt
             test/**/*.sql
-          separator: ' '
       - name: FAILED
         if: steps.test-no-changes.outputs.changed-files != ''
         run: |
@@ -46,16 +45,15 @@ jobs:
 
       - name: 'TEST: Expect Changes (modified)'
         id: test-modified
-        uses: ./
+        uses: ./.github/actions/wrapper
         with:
           path: |
             test/*.txt
             test/*.sql
             test/**/*.txt
             test/**/*.sql
-          separator: ' '
       - name: FAILED
-        if: steps.test-modified.outputs.changed-files != 'test/new.txt'
+        if: steps.test-modified.outputs.changed-files != '''test/new.txt'''
         run: |
           echo "Changed Files:"
           echo "${{ steps.test-modified.outputs.changed-files }}"
@@ -67,13 +65,12 @@ jobs:
 
       - name: 'TEST: Expect Changes (added)'
         id: test-added
-        uses: ./
+        uses: ./.github/actions/wrapper
         with:
           path: |
             unstaged.txt
-          separator: ' '
       - name: FAILED
-        if: steps.test-added.outputs.changed-files != 'unstaged.txt'
+        if: steps.test-added.outputs.changed-files != '''unstaged.txt'''
         run: |
           echo "Changed Files:"
           echo "${{ steps.test-added.outputs.changed-files }}"
@@ -85,13 +82,12 @@ jobs:
 
       - name: 'TEST: Expect Changes (deleted)'
         id: test-deleted
-        uses: ./
+        uses: ./.github/actions/wrapper
         with:
           path: |
             test/new.sql
-          separator: ' '
       - name: FAILED
-        if: steps.test-deleted.outputs.changed-files != 'test/new.sql'
+        if: steps.test-deleted.outputs.changed-files != '''test/new.sql'''
         run: |
           echo "Changed Files:"
           echo "${{ steps.test-unstaged.deleted.changed-files }}"
@@ -99,13 +95,12 @@ jobs:
 
       - name: 'TEST: Expect Changes (unstaged)'
         id: test-unstaged
-        uses: ./
+        uses: ./.github/actions/wrapper
         with:
           path: |
             unstaged.txt
-          separator: ' '
       - name: FAILED
-        if: steps.test-unstaged.outputs.changed-files != 'unstaged.txt'
+        if: steps.test-unstaged.outputs.changed-files != '''unstaged.txt'''
         run: |
           echo "Changed Files:"
           echo "${{ steps.test-unstaged.outputs.changed-files }}"
@@ -113,80 +108,15 @@ jobs:
 
       - name: 'TEST: Expect Changes (all)'
         id: test-all
-        uses: ./
+        uses: ./.github/actions/wrapper
         with:
           path: |
             test/new.txt
             unstaged.txt
             test/new.sql
-          separator: ' '
       - name: FAILED
-        if: steps.test-all.outputs.changed-files != 'test/new.sql test/new.txt unstaged.txt'
+        if: steps.test-all.outputs.changed-files != '''test/new.sql'' ''test/new.txt'' ''unstaged.txt'''
         run: |
           echo "Changed Files:"
           echo "${{ steps.test-all.outputs.changed-files }}"
-          exit 1
-
-      - name: 'TEST: Ignore Changes (modified)'
-        id: test-ignore-modified
-        uses: ./
-        with:
-          path: |
-            !test/new.txt
-            unstaged.txt
-            !test/new.sql
-          separator: ' '
-      - name: FAILED
-        if: steps.test-ignore-modified.outputs.changed-files != 'unstaged.txt'
-        run: |
-          echo "Changed Files:"
-          echo "${{ steps.test-ignore-modified.outputs.changed-files }}"
-          exit 1
-
-      - name: 'TEST: Ignore Changes (added)'
-        id: test-ignore-added
-        uses: ./
-        with:
-          path: |
-            test/new.txt
-            !unstaged.txt
-            !test/new.sql
-          separator: ' '
-      - name: FAILED
-        if: steps.test-ignore-added.outputs.changed-files != 'test/new.txt'
-        run: |
-          echo "Changed Files:"
-          echo "${{ steps.test-ignore-added.outputs.changed-files }}"
-          exit 1
-
-      - name: 'TEST: Ignore Changes (deleted)'
-        id: test-ignore-deleted
-        uses: ./
-        with:
-          path: |
-            !test/new.txt
-            !unstaged.txt
-            test/new.sql
-          separator: ' '
-      - name: FAILED
-        if: steps.test-ignore-deleted.outputs.changed-files != 'test/new.sql'
-        run: |
-          echo "Changed Files:"
-          echo "${{ steps.test-ignore-deleted.outputs.changed-files }}"
-          exit 1
-
-      - name: 'TEST: Ignore Changes (all)'
-        id: test-ignore-all
-        uses: ./
-        with:
-          path: |
-            !test/new.txt
-            !unstaged.txt
-            !test/new.sql
-          separator: ' '
-      - name: FAILED
-        if: steps.test-ignore-all.outputs.changed-files != ''
-        run: |
-          echo "Changed Files:"
-          echo "${{ steps.test-ignore-all.outputs.changed-files }}"
           exit 1

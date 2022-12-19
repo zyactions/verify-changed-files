@@ -8,42 +8,49 @@ branding:
   color: green
 
 inputs:
-  path:
-    description: >
-      A file, directory or wildcard pattern that describes which files to verify.
-      Supports multi-line strings.
-      Matches all files, if set to the empty string.
-    type: string
-    required: false
-    default: ''
-  separator:
-    description: >
-      A character- or string to be used to separate the individual file names in the output list. 
-      Any filename containing this separator will be enclosed in double quotes. 
-      Defaults to the newline character '\n', if set to the empty string.
-    type: string
-    required: false
-    default: ''
   exclude-ignored:
-    description: Whether to exclude '.gitignore' ignored files from the changed files detection.
+    description: >
+      Whether to exclude `.gitignore` ignored files from the changed files detection.
+
+      Defaults to `true`.
     type: boolean
     required: false
     default: true
+  return-pipe:
+    description: >
+      Enable this option to return a shell (bash) command in the `pipe` output that can be
+      used for piping.
+
+      The output command must be `eval`ed to return the results. It can also be passed to 
+      other actions that support a `pipe` input.
+
+      The `changed-files` output will not be populated if this option is enabled.
+    type: boolean
+    required: false
+    default: false
 
 outputs:
   changed-files:
-    description: The list of all changed files, or an empty string.
+    description: >
+      The list of all changed files, or an empty string.
+
+      This output is only available if the `return-pipe` option is not enabled.
     value: ${{ steps.verify.outputs.changed-files }}
+  pipe:
+    description: >
+      A shell (bash) command which can be used for piping.
+      
+      This output is only available if the `return-pipe` option is enabled.
+    value: ${{ steps.verify.outputs.pipe }}
 
 runs:
   using: composite
   steps:
-    - name: Verify
+    - name: Verify Changed Files
       id: verify
       shell: bash
       env:
-        INPUT_PATH: ${{ inputs.path }}
-        INPUT_SEPARATOR: ${{ inputs.separator }}
         INPUT_EXCLUDE_IGNORED: ${{ inputs.exclude-ignored != 'false' && 'true' || 'false' }}
+        INPUT_RETURN_PIPE: ${{ inputs.return-pipe != 'false' && 'true' || 'false' }}
       run: |
-        bash "$GITHUB_ACTION_PATH/entrypoint.sh"
+        "${{ github.action_path }}/entrypoint.sh"

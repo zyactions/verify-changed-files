@@ -11,7 +11,6 @@ A GitHub Action to verify file changes that occur during workflow execution.
 ## Features
 
 - Lists all files that changed during a workflow execution
-- Supports [glob patterns][glob-cheat-sheet] to restrict change detection to a subset of files
 - Fast execution
 - Scales to large repositories
 - Supports all platforms (Linux, macOS, Windows)
@@ -31,9 +30,9 @@ steps:
       echo "test" > test/new.txt
       echo "test" > unstaged.txt
 
-  - name: Verify Changed Files
+  - name: Get Changed Files
     id: verify-changes
-    uses: zyactions/verify-changed-files@master
+    uses: zyactions/verify-changed-files@v1
 
   - name: Run only if one of the files has changed
     if: steps.verify-changes.outputs.changed-files != ''
@@ -54,30 +53,40 @@ steps:
   - name: Checkout
     uses: actions/checkout@v3.1.0
     # ...
-  - name: Verify Changed Files
-    id: verify-changes
-    uses: zyactions/verify-changed-files@master
+  - name: Get Changed Files
+    id: stage1
+    uses: zyactions/verify-changed-files@v1
     with:
-      path: |
+      return-pipe: true
+
+  - name: Filter Results
+    id: stage2
+    uses: zyactions/glob@v1
+    with:
+      pattern: |
         test/*
         unstaged.txt
+      pipe: ${{ steps.stage1.outputs.pipe }}
+
+  - name: Print
+    run: |
+      echo "Changed Files:"
+      echo "${{ steps.stage2.outputs.matches }}"
 ```
 
 ## Inputs
 
-### `path`
-
-A file, directory or wildcard pattern that describes which files to verify. Supports multi-line strings. Matches all files, if set to the empty string.
-
-Check out the [glob pattern cheat sheet][glob-cheat-sheet] for reference. Multi line patterns must be specified without quotes.
-
-### `separator`
-
-A character- or string to be used to separate the individual file names in the output list. Any filename containing this separator will be enclosed in double quotes. Defaults to the newline character `\n`, if set to the empty string.
-
 ### `exclude-ignored`
 
 Configures the action to exclude `.gitignore` ignored files for added files detection. This option is enabled by default.
+
+### `return-pipe`
+
+Enable this option to return a shell (bash) command in the `pipe` output that can be used for piping.
+
+The output command must be `eval`ed to return the results. It can also be passed to other actions that support a `pipe` input.
+
+> **Note**: The `changed-files` output will not be populated if this option is enabled.
 
 ## Outputs
 
@@ -85,9 +94,19 @@ Configures the action to exclude `.gitignore` ignored files for added files dete
 
 This output contains all files detected by the action, separated by the configured `separator`. Contains the empty string if no changes were detected.
 
+> **Note**: This output is only available if the `return-pipe` option is not enabled.
+
+### `pipe`
+
+A shell (bash) command which can be used for piping.
+      
+> **Note**: This output is only available if the `return-pipe` option is enabled.
+
 ## Dependencies
 
-This action does not use external dependencies.
+### Actions
+
+This action does not use external GitHub Actions dependencies.
 
 ## Versioning
 
@@ -99,7 +118,7 @@ Verify Changed Files Action is licensed under the MIT license.
 
 [glob-cheat-sheet]: https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#filter-pattern-cheat-sheet
 [job-runs-on]: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
-[semver]:https://semver.org
+[semver]: https://semver.org
 [shield-license-mit]: https://img.shields.io/badge/License-MIT-blue.svg
 [shield-ci]: https://github.com/zyactions/verify-changed-files/actions/workflows/ci.yml/badge.svg
 [shield-platform-ubuntu]: https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu\&logoColor=white
