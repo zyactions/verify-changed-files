@@ -74,6 +74,8 @@ steps:
       echo "${{ steps.stage2.outputs.matches }}"
 ```
 
+Check out the [glob cheat sheet][glob-cheat-sheet] or the [zyactions/glob][zyactions-glob] action for further details.
+
 ## Inputs
 
 ### `exclude-ignored`
@@ -125,3 +127,4 @@ Verify Changed Files Action is licensed under the MIT license.
 [shield-platform-macos]: https://img.shields.io/badge/macOS-53C633?logo=apple\&logoColor=white
 [shield-platform-windows]: https://img.shields.io/badge/Windows-0078D6?logo=windows\&logoColor=white
 [workflow-ci]: https://github.com/zyactions/verify-changed-files/actions/workflows/ci.yml
+[zyactions-glob]: https://github.com/zyactions/glob
