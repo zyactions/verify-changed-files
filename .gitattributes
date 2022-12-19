@@ -70,6 +70,10 @@
 *.pyo      binary export-ignore
 *.pyd      binary
 
+### Linguist exclusions ############################################################################
+
+test/*     linguist-vendored
+
 ### Exclude files from exporting ###################################################################
 
 .gitattributes export-ignore
