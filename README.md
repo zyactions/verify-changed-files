@@ -23,7 +23,7 @@ A GitHub Action to verify file changes that occur during workflow execution.
 ```yaml
 steps:
   - name: Checkout
-    uses: actions/checkout@v3.1.0
+    uses: actions/checkout@v3
 
   - name: Change Files
     run: |
@@ -51,7 +51,7 @@ steps:
 ```yaml
 steps:
   - name: Checkout
-    uses: actions/checkout@v3.1.0
+    uses: actions/checkout@v3
     # ...
   - name: Get Changed Files
     id: stage1
