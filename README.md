@@ -23,7 +23,7 @@ A GitHub Action to verify file changes that occur during workflow execution.
 ```yaml
 steps:
   - name: Checkout
-    uses: actions/checkout@v3.1.0
+    uses: actions/checkout@v3
 
   - name: Change Files
     run: |
@@ -32,7 +32,7 @@ steps:
 
   - name: Get Changed Files
     id: verify-changes
-    uses: zyactions/verify-changed-files@v1
+    uses: zyactions/verify-changed-files@v2
 
   - name: Run only if one of the files has changed
     if: steps.verify-changes.outputs.changed-files != ''
@@ -51,17 +51,17 @@ steps:
 ```yaml
 steps:
   - name: Checkout
-    uses: actions/checkout@v3.1.0
+    uses: actions/checkout@v3
     # ...
   - name: Get Changed Files
     id: stage1
-    uses: zyactions/verify-changed-files@v1
+    uses: zyactions/verify-changed-files@v2
     with:
       return-pipe: true
 
   - name: Filter Results
     id: stage2
-    uses: zyactions/glob@v1
+    uses: zyactions/glob@v2
     with:
       pattern: |
         test/*
