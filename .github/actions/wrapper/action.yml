@@ -22,16 +22,16 @@ runs:
     # ... into a glob filter
     - name: Filter Results
       id: stage2
-      uses: zyactions/glob@v1
+      uses: zyactions/glob@v2
       with:
         pattern: ${{ inputs.path }}
         pipe: ${{ steps.stage1.outputs.pipe }}
         return-pipe: true
 
-    # ... and apply shell quoting
-    - name: Quote
+    # ... and apply sorting and shell quoting
+    - name: Sort and Quote
       id: result
       shell: bash
       run: |
-        result=$(${{ steps.stage2.outputs.pipe }} | '${{ github.action_path }}/shellquote.sh' ' ')
+        result=$(${{ steps.stage2.outputs.pipe }} | LC_ALL=C sort -u | '${{ github.action_path }}/shellquote.sh' ' ')
         echo "result=$result" >> $GITHUB_OUTPUT

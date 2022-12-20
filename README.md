@@ -32,7 +32,7 @@ steps:
 
   - name: Get Changed Files
     id: verify-changes
-    uses: zyactions/verify-changed-files@v1
+    uses: zyactions/verify-changed-files@v2
 
   - name: Run only if one of the files has changed
     if: steps.verify-changes.outputs.changed-files != ''
@@ -55,13 +55,13 @@ steps:
     # ...
   - name: Get Changed Files
     id: stage1
-    uses: zyactions/verify-changed-files@v1
+    uses: zyactions/verify-changed-files@v2
     with:
       return-pipe: true
 
   - name: Filter Results
     id: stage2
-    uses: zyactions/glob@v1
+    uses: zyactions/glob@v2
     with:
       pattern: |
         test/*
